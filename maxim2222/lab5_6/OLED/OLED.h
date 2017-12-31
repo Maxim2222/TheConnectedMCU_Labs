@@ -1,5 +1,3 @@
-
-
 /* Microchip Technology Inc. and its subsidiaries.  You may use this software 
  * and any derivatives exclusively with Microchip products. 
  * 
@@ -35,13 +33,75 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-// TODO Insert appropriate #include <>
-#include "UART.h"
+#include <stdint.h>
 
-// TODO Insert declarations
-#define NUM_GUESSES (6)
-#define TIME_OUT (-1)
-#define ILLEGAL_CHAR (-2)
+// TODO: Add RTOS header file includes
+
+typedef uint8_t BYTE;
+
+// TODO: Declare mutex handle here
+
+#define MASK(x) (1<<(x))
+
+#if 0
+/* ------------------------------------------------------------ */
+/* Pin definitions for access to OLED control signals on chipKIT Uno32
+*/
+#define prtVddCtrl PORTF
+#define bitVddCtrl MASK(6)
+
+#define prtVbatCtrl PORTF
+#define bitVbatCtrl MASK(5)
+
+#define prtDataCmd PORTF
+#define bitDataCmd MASK(4)
+
+#define prtReset PORTG
+#define bitReset MASK(9)
+#endif
+
+/* ------------------------------------------------------------ */
+/* Pin definitions for access to OLED control signals on chipKIT wiFIRE
+*/
+#define prtVddCtrl PORTD
+#define bitVddCtrl MASK(12)
+
+#define prtVbatCtrl PORTD
+#define bitVbatCtrl MASK(15)
+
+#define prtDataCmd PORTD
+#define bitDataCmd MASK(14)
+
+#define prtReset PORTG
+#define bitReset MASK(9)
+/* ------------------------------------------------------------ */
+/* Symbols describing the geometry of the display. 
+ */
+#define cbOledDispMax 512 //max number of bytes in display buffer
+#define ccolOledMax 128 //number of display columns
+#define crowOledMax 32 //number of display rows
+#define cpagOledMax 4 //number of display memory pages
+
+#define	cbOledChar		8		//font glyph definitions is 8 bytes long
+#define	chOledUserMax	0x20	//number of character defs in user font table
+#define	cbOledFontUser	(chOledUserMax*cbOledChar)
+
+/* Graphics drawing modes.
+*/
+#define	modOledSet		0
+#define	modOledOr		1
+#define	modOledAnd		2
+#define	modOledXor		3
+
+/* ------------------------------------------------------------ */
+/* This array is the off-screen frame buffer used for rendering.
+** It isn't possible to read back from the OLED display device,
+** so display data is rendered into this off-screen buffer and then
+** copied to the display.
+*/
+BYTE rgbOledBmp[cbOledDispMax];
+
+
 
 // Comment a function and leverage automatic documentation with slash star star
 /**
@@ -66,7 +126,17 @@
  */
 // TODO Insert declarations or function prototypes (right here) to leverage 
 // live documentation
-void program_selection(void);
+void	OledInit();
+void    OledDvrInit();
+void	OledTerm();
+void	OledDisplayOn();
+void	OledDisplayOff();
+void	OledClear();
+void	OledClearBuffer();
+void	OledUpdate();
+
+void    OledHostInit();
+void    OledDspInit();
 
 #ifdef	__cplusplus
 extern "C" {

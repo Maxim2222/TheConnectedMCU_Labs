@@ -25,8 +25,8 @@
 
 /* 
  * File:   
- * Author: Based on main.c by Yuri Panchul 
- * Comments: Modified by Alex Dean
+ * Author: 
+ * Comments:
  * Revision history: 
  */
 
@@ -35,8 +35,12 @@
 // Section: Included Files 
 // *****************************************************************************
 // *****************************************************************************
+#ifdef __XC32
+    #include <xc.h>          /* Defines special function registers, CP0 regs  */
+#endif
 
-#include "UART.h"
+#include <stdint.h>
+#include "OLED.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -52,40 +56,6 @@
 // *****************************************************************************
 // *****************************************************************************
 
-void UART4_init (void)
-{
-    RPF8R = 2; // PPS for U4RX from pin F2
-    U4RXR = 11; // PPS for U4TX to pin F8
-    
-    U4STAbits.UTXEN = 1;   // enable transmit pin
-    U4STAbits.URXEN = 1;   // enable receive pin
-    U4BRG           = ((100 * 1000000) / (16 * 115200)) - 1;
-    U4MODEbits.ON   = 1;   // enable UART
-}
-
-char UART4_getc(void) {
-    while (!U4STAbits.URXDA)
-        ; // wait until character received
-    return U4RXREG; // read character
-}
-
-void UART4_putc (char c)
-{
-    while (U4STAbits.UTXBF)
-        ;  // wait until transmit buffer empty
-    U4TXREG = c;  // transmit character
-}
-
-/**
- * 
- */
-void UART4_puts (char *s)
-{
-    while (*s != '\0')
-        UART4_putc (*s++);
-}
-
-
 // Comment a function definition and leverage automatic documentation 
 /**
   <p><b>Function:</b></p>
@@ -97,18 +67,74 @@ void UART4_puts (char *s)
   <p><b>Remarks:</b></p>
  */
 // TODO Insert function definitions (right here) to leverage live documentation
-void UART4_test (void)
+/* ------------------------------------------------------------ */
+/*** OledPutBuffer
+**
+** Parameters:
+** cb - number of bytes to send/receive
+** rgbTx - pointer to the buffer to send
+**
+** Return Value:
+** none
+**
+** Errors:
+** none
+**
+** Description:
+** Send the bytes specified in rgbTx to the slave.
+*/
+void
+OledPutBuffer(int cb, BYTE * rgbTx)
 {
-    char c;
-
-    UART4_puts("Hello, World!\r\n");
-    UART4_puts("Please press a key.\r\n");
-    
-    for (;;)
-    {
-        c = UART4_getc();
-        UART4_putc('[');
-        UART4_putc (c);
-        UART4_puts("]\r\n"); 
+    int ib;
+    BYTE bTmp;
+    /* Write/Read the data
+    */
+    for (ib = 0; ib < cb; ib++) {
+        /* Wait for transmitter to be ready
+        */
+        while (SPI2STATbits.SPITBE == 0);
+        /* Write the next transmit byte.
+        */
+        SPI2BUF = *rgbTx++;
+        /* Wait for receive byte.
+        */
+        while (SPI2STATbits.SPIRBF == 0);
+        bTmp = SPI2BUF;
     }
+}
+/* ------------------------------------------------------------ */
+/*** Spi2PutByte
+**
+** Parameters:
+** bVal - byte value to write
+**
+** Return Value:
+** Returns byte read
+**
+** Errors:
+** none
+**
+** Description:
+** Write/Read a byte on SPI port 2
+ * */
+BYTE
+Spi2PutByte(BYTE bVal)
+{
+    BYTE bRx;
+    /* Wait for transmitter to be ready
+    */
+    while (SPI2STATbits.SPITBE == 0)
+        ;
+    /* Write the next transmit byte.
+    */
+    SPI2BUF = bVal;
+    /* Wait for receive byte.
+    */
+    while (SPI2STATbits.SPIRBF == 0)
+        ;
+    /* Put the received byte in the buffer.
+    */
+    bRx = SPI2BUF;
+    return bRx;
 }
