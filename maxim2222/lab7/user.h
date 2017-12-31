@@ -1,9 +1,4 @@
-#ifndef USER_H
-#define USER_H
-
-#include "FreeRTOS.h"
-#include "semphr.h"
-
+#include <stdint.h>
 /******************************************************************************/
 /* User Level #define Macros                                                  */
 /******************************************************************************/
@@ -17,6 +12,7 @@
 #define BTN1_PORT_BIT       PORTAbits.RA5
 #define BTN2_PORT_BIT       PORTAbits.RA4
 
+#define CPU_TEMP_ADC_CHANNEL      (42)
 
 // Basic I/O Shield 
 #define BIOS_LD1_PORT_BIT        LATEbits.LATE0
@@ -28,29 +24,28 @@
 #define BIOS_LD7_PORT_BIT        LATEbits.LATE6
 #define BIOS_LD8_PORT_BIT        LATEbits.LATE7
 
-#define BTN_1_SCHLD         PORTGbits.RG7
-#define BTN_2_SCHLD         PORTDbits.RD5
-#define BTN_3_SCHLD         PORTFbits.RF1
-#define BTN_4_SCHLD         PORTAbits.RA2
+#define BIOS_BTN1_PORT_BIT       PORTGbits.RG7
+#define BIOS_BTN2_PORT_BIT       PORTDbits.RD5
+#define BIOS_BTN3_PORT_BIT       PORTFbits.RF1
+#define BIOS_BTN4_PORT_BIT       PORTAbits.RA2
 
 #define BIOS_SW1_PORT_BIT       PORTEbits.RE8
 #define BIOS_SW2_PORT_BIT       PORTEbits.RE9
 #define BIOS_SW3_PORT_BIT       PORTAbits.RA14
 #define BIOS_SW4_PORT_BIT       PORTCbits.RC1
 
+
+// typedef uint8_t BYTE;
+
 /******************************************************************************/
-/* User Function Prototypes                                                   */
+/* User Function Prototypes                                                    /
 /******************************************************************************/
+
+#define USE_SRS ( 1)
+
+/* TODO User level functions prototypes (i.e. InitApp) go here */
+
 void InitApp(void);         /* I/O and Peripheral Initialization */
-
-void Task1 ( void * pvParameters);
-void Task2 ( void * pvParameters);
-
 void DelayMs(int t);
 
-// TODO: Declare function ClockTask here
-// TODO: Declare function SerialInTask here
-// TODO: Declare semaphore handle here
-SemaphoreHandle_t xMutexOLED;
-
-#endif // USER_H
+int Timing_Test_Code(int * a, int  * b, int len);

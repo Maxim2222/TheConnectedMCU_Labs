@@ -35,11 +35,13 @@
 
 #include <stdint.h>
 
-// TODO: Add RTOS header file includes
-
 typedef uint8_t BYTE;
 
-// TODO: Declare mutex handle here
+// TODO Insert appropriate #include <>
+
+// TODO Insert C++ class definitions if appropriate
+
+// TODO Insert declarations
 
 #define MASK(x) (1<<(x))
 
@@ -134,9 +136,6 @@ void	OledDisplayOff();
 void	OledClear();
 void	OledClearBuffer();
 void	OledUpdate();
-
-void    OledHostInit();
-void    OledDspInit();
 
 #ifdef	__cplusplus
 extern "C" {

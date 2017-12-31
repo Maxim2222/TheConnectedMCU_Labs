@@ -90,8 +90,6 @@ BYTE *	pbOledFontCur;
 BYTE *	pbOledFontUser;
 
 
-// TODO: Define mutex handle here
-SemaphoreHandle_t xMutexOLED;
 // *****************************************************************************
 // *****************************************************************************
 // Section: User Functions
@@ -134,7 +132,7 @@ void OledHostInit()
     /* Initialize SPI port 2.
     */
     SPI2CON = 0;
-    SPI2BRG = 15; //8Mhz, with 80Mhz PB clock
+    SPI2BRG = 9;
     SPI2STATbits.SPIROV = 0;
     SPI2CONbits.CKP = 1;
     SPI2CONbits.MSTEN = 1;
@@ -398,4 +396,10 @@ OledDevTerm()
 	*/
 // TODO	PORTClearBits(prtVddCtrl, bitVddCtrl);
 
+}
+
+void OledInit() {
+   OledHostInit();
+   OledDspInit();
+   OledDvrInit();
 }
