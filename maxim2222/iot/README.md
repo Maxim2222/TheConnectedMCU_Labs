@@ -1,1 +1,1 @@
-Maksym O. Kysel, DK-42 group / Кисель Максим Олександрович, група ДК-42 / [@maxim2222](https://github.com/maxim2222)
+A telemetric IOT module was developed that reads the ambient temperature using a digital sensor tcn75a that is connected to the board on the i2c bus, as well as the sensor reading is sent by bluetooth to the phone with the android, and the phone can also set the delay in reading the readings from the sensor.
